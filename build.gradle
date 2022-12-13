@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id("com.github.johnrengelman.shadow") version ("7.0.0")
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group 'me.third.right.pluginBase'
+version '1.0'
+
+sourceCompatibility = 1.8
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io'              }
+    maven { url 'https://m2.dv8tion.net/releases' }
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+dependencies {
+    provided(files("Libs/3rdBotTwo-1.0-all.jar"))
+
+    implementation(files("Libs/3rdBotTwo-1.0-all.jar"))
+}
+
+shadowJar {
+    dependencies {
+        exclude(dependency(files("Libs/3rdBotTwo-1.0-all.jar")))
+    }
+    configurations = [project.configurations.shadow]
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main': 'me.third.right.pluginBase.Main',//Required
+                'TargetVersion': '1.7',//Required
+        )
+    }
+}
+
+build.dependsOn(shadowJar)
